@@ -1,0 +1,1 @@
+# shin-mochacluster-operator
