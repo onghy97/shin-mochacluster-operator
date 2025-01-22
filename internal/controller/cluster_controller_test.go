@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	clusterv1alpha1 "github.com/onghy/shin-mochacluster-operator/api/v1alpha1"
+	clusterv1beta1 "github.com/onghy/shin-mochacluster-operator/api/v1beta1"
 )
 
 var _ = Describe("Cluster Controller", func() {
@@ -40,13 +40,13 @@ var _ = Describe("Cluster Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		cluster := &clusterv1alpha1.Cluster{}
+		cluster := &clusterv1beta1.Cluster{}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind Cluster")
 			err := k8sClient.Get(ctx, typeNamespacedName, cluster)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &clusterv1alpha1.Cluster{
+				resource := &clusterv1beta1.Cluster{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,7 +59,7 @@ var _ = Describe("Cluster Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &clusterv1alpha1.Cluster{}
+			resource := &clusterv1beta1.Cluster{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 

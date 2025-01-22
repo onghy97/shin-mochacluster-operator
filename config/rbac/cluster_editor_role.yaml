@@ -8,7 +8,7 @@ metadata:
   name: cluster-editor-role
 rules:
 - apiGroups:
-  - cluster.shin-mochacluster-operator.io
+  - cluster.x-k8s.io
   resources:
   - clusters
   verbs:
@@ -20,7 +20,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - cluster.shin-mochacluster-operator.io
+  - cluster.x-k8s.io
   resources:
   - clusters/status
   verbs:

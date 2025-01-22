@@ -24,7 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	clusterv1alpha1 "github.com/onghy/shin-mochacluster-operator/api/v1alpha1"
+	clusterv1beta1 "github.com/onghy/shin-mochacluster-operator/api/v1beta1"
 )
 
 // ClusterReconciler reconciles a Cluster object
@@ -33,9 +33,9 @@ type ClusterReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=cluster.shin-mochacluster-operator.io,resources=clusters,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=cluster.shin-mochacluster-operator.io,resources=clusters/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=cluster.shin-mochacluster-operator.io,resources=clusters/finalizers,verbs=update
+// +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -50,6 +50,33 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
+	ctx = context.Background()
+	cluster := &clusterv1beta1.Cluster{}
+	err := r.Get(ctx, req.NamespacedName, cluster)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// Logic to check and update cluster status
+	if cluster.Status.Phase == "" {
+		// Set the initial phase if not set
+		cluster.Status.Phase = "Creating"
+		err := r.Status().Update(ctx, cluster)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
+	// Update the status or do further checks based on actual cluster creation status
+	if cluster.Status.Phase == "Creating" {
+		// Here, you can monitor the creation status by using some external API
+		// or checking the status of the cluster within Kubernetes.
+		cluster.Status.Phase = "Active"
+		err := r.Status().Update(ctx, cluster)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
@@ -57,6 +84,6 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 // SetupWithManager sets up the controller with the Manager.
 func (r *ClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&clusterv1alpha1.Cluster{}).
+		For(&clusterv1beta1.Cluster{}).
 		Complete(r)
 }

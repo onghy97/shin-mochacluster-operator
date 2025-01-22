@@ -8,7 +8,7 @@ metadata:
   name: cluster-viewer-role
 rules:
 - apiGroups:
-  - cluster.shin-mochacluster-operator.io
+  - cluster.x-k8s.io
   resources:
   - clusters
   verbs:
@@ -16,7 +16,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - cluster.shin-mochacluster-operator.io
+  - cluster.x-k8s.io
   resources:
   - clusters/status
   verbs:
